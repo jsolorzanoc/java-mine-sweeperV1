@@ -45,9 +45,12 @@ public class Board {
     public void printGrid(){
         for (var i = 0; i < rows; i++){
             for (var j = 0; j < cols; j++){
-                String value = grid[i][j].isMine() ?  "M " :
+                String value =
+                        !grid[i][j].isRevealed() && grid[i][j].isFlagged() ? "🚩":
+                        !grid[i][j].isRevealed() ? "■ ":
+                        grid[i][j].isMine() ?  "M " :
                         grid[i][j].getAdjacentMines() > 0 ?  grid[i][j].getAdjacentMines() + " " :
-                                ". ";
+                                " ";
 
                 System.out.print(value);
             }
@@ -80,8 +83,52 @@ public class Board {
         }
 
     }
+    }
 
+    public boolean reveal(int row, int col){
 
+        if (row < 0 || row >= rows || col < 0 || col >= cols){
+            return false;
+        } else if (grid[row][col].isRevealed()) {
+            return false;
+        } else if (grid[row][col].isFlagged()) {
+            return false;
+        } else if (grid[row][col].isMine()) {
+            return true;
+        } else{
+            grid[row][col].reveal();
+
+            if (grid[row][col].getAdjacentMines() == 0){
+            for (int dr = -1; dr <= 1; dr++) {
+                for (int dc = -1; dc <= 1; dc++) {
+                    reveal(row + dr, col +dc);
+                }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void toggleFlag(int row, int col){
+        //Check bounds
+        if (row < 0 || row >= rows || col < 0 || col >= cols){
+            return;
+        } else if (grid[row][col].isRevealed()) {
+            return;
+        }else {
+            grid[row][col].toggleFlag();
+        }
+    }
+
+    public boolean isWon(){
+        for (var i = 0; i < rows; i++ ){
+            for (var j = 0; j < cols; j++){
+                if (!grid[i][j].isRevealed() && !grid[i][j].isMine()){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
