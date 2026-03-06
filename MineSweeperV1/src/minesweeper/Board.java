@@ -18,6 +18,9 @@ public class Board {
         this.rows = rows;
         this.mines = mines;
         this.grid = new Cell[cols][rows];
+        this.initCells();
+        this.placeMines();
+        this.calculateAdjacentMines();
     }
 
     public void initCells(){ // Poblates cells with a new cell obj
